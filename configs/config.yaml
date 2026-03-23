@@ -1,0 +1,3 @@
+directories:
+  audio_data_path: "../data/raw/urbansound8k"
+  metadata: "../data/raw/urbansound8k/UrbanSound8K.csv"
