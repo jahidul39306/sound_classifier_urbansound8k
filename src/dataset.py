@@ -1,5 +1,7 @@
 import os
 
+import torch
+import torch
 from torch.utils.data import Dataset
 import pandas as pd
 import torchaudio
@@ -16,10 +18,11 @@ METADATA = Path(config["directories"]["metadata"])
 
 class UrbanDataset(Dataset):
 
-    def __init__(self, audio_path, metadata, transform=None):
+    def __init__(self, audio_path, metadata, transform=None, device="cpu"):
         self.audio_path = audio_path
         self.metadata = pd.read_csv(metadata)
-        self.transform = transform
+        self.device = device
+        self.transform = transform.to(device) if transform else None
 
     def __len__(self):
         return len(self.metadata)
@@ -35,6 +38,9 @@ class UrbanDataset(Dataset):
 
 
 if __name__ == "__main__":
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Using device {device}")
+    
     transformer = AudioTransform(
         target_sr=22050, target_samples=22050, n_fft=1024, hop_length=512, n_mels=64
     )
