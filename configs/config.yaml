@@ -1,3 +1,13 @@
 directories:
   audio_data_path: "../data/raw/urbansound8k"
   metadata: "../data/raw/urbansound8k/UrbanSound8K.csv"
+
+audio:
+  sample_rate: 22050
+  duration: 4        # in seconds
+  n_fft: 1024
+  hop_length: 512
+  n_mels: 64
+
+model:
+  num_classes: 10

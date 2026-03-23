@@ -1,7 +1,6 @@
 import os
 
 import torch
-import torch
 from torch.utils.data import Dataset
 import pandas as pd
 import torchaudio
@@ -14,6 +13,11 @@ with open("../configs/config.yaml", "r") as f:
 
 DS_PATH = Path(config["directories"]["audio_data_path"])
 METADATA = Path(config["directories"]["metadata"])
+DURATION = config["audio"]["duration"]
+SAMPLE_RATE = config["audio"]["sample_rate"]
+N_FFT = config["audio"]["n_fft"]
+HOP_LENGTH = config["audio"]["hop_length"]
+N_MELS = config["audio"]["n_mels"]
 
 
 class UrbanDataset(Dataset):
@@ -40,9 +44,13 @@ class UrbanDataset(Dataset):
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device {device}")
-    
+
     transformer = AudioTransform(
-        target_sr=22050, target_samples=22050, n_fft=1024, hop_length=512, n_mels=64
+        target_sr=SAMPLE_RATE,
+        target_samples=DURATION * SAMPLE_RATE,
+        n_fft=N_FFT,
+        hop_length=HOP_LENGTH,
+        n_mels=N_MELS,
     )
     ds = UrbanDataset(DS_PATH, METADATA, transform=transformer)
     print(f"Total number of samples: {len(ds)}")
