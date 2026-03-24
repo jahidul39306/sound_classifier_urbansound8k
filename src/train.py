@@ -115,5 +115,4 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
     train(model, train_dl, val_dl, loss_fn, optimizer, device, EPOCHS)
-    torch.save(model.state_dict(), "../outputs/checkpoints/model.pth")
-    print("Model saved to outputs/checkpoints/model.pth")
+    print("Training finished.")
