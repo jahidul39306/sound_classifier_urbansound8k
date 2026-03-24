@@ -97,23 +97,22 @@ if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}")
 
-    transfrom = AudioTransform(
+    transform = AudioTransform(
         target_sr=SAMPLE_RATE,
         target_samples=SAMPLE_RATE * DURATION,
         n_fft=N_FFT,
         n_mels=N_MELS,
         hop_length=HOP_LENGTH,
-    )
+    ).to(device)
     metadata_df = pd.read_csv(METADATA)
     train_val_meta = metadata_df[metadata_df["fold"] != 10]
-    ds = UrbanDataset(DS_PATH, train_val_meta, transfrom, device)
+    ds = UrbanDataset(DS_PATH, train_val_meta, transform)
     print("Creating dataloaders... ")
     train_dl, val_dl = create_dataloader(ds, BATCH_SIZE)
     print("Dataloaders created successfully")
     model = SoundClassifier(NUM_CLASSES).to(device)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+    optimizer = torch.optim.Adam(model.parameters(), lr=LR, weight_decay=1e-4)
 
     train(model, train_dl, val_dl, loss_fn, optimizer, device, EPOCHS)
-    torch.save(model.state_dict(), "../outputs/checkpoints/model.pth")
-    print("Model saved to outputs/checkpoints/model.pth")
+    print("Training finished.")
