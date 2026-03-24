@@ -14,5 +14,5 @@ model:
 
 training:
   batch_size: 128
-  epochs: 10
+  epochs: 40
   lr: 0.001
