@@ -26,11 +26,10 @@ N_MELS = config["audio"]["n_mels"]
 
 class UrbanDataset(Dataset):
 
-    def __init__(self, audio_path, metadata, transform=None, device="cpu"):
+    def __init__(self, audio_path, metadata, transform=None):
         self.audio_path = audio_path
         self.metadata = pd.read_csv(metadata) if isinstance(metadata, (str, Path)) else metadata
-        self.device = device
-        self.transform = transform.to(device) if transform else None
+        self.transform = transform
 
     def __len__(self):
         return len(self.metadata)
