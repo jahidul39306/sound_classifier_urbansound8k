@@ -13,12 +13,13 @@ class SoundClassifier(nn.Module):
     def __init__(self, num_classes=10):
         super().__init__()
 
-        def conv_block(in_ch, out_ch):
+        def conv_block(in_ch, out_ch, drop=0.2):
             return nn.Sequential(
                 nn.Conv2d(in_ch, out_ch, kernel_size=3, stride=1, padding=1),
                 nn.BatchNorm2d(out_ch),
                 nn.ReLU(),
                 nn.MaxPool2d(2),
+                nn.Dropout2d(drop)
             )
 
         self.conv1 = conv_block(1, 16)
@@ -28,10 +29,13 @@ class SoundClassifier(nn.Module):
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(5120, 256),
+            nn.Linear(5120, 512),
             nn.ReLU(),
             nn.Dropout(0.3),
-            nn.Linear(256, num_classes),
+            nn.Linear(512, 128),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(128, num_classes),
         )
 
     def forward(self, x):
