@@ -10,6 +10,7 @@ from model import SoundClassifier
 from transforms import AudioTransform
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
 
 
 CONFIG_PATH = Path(__file__).parent.parent / "configs" / "config.yaml"
@@ -78,20 +79,73 @@ def validate(model, data_loader, loss_fn, device):
     return avg_loss, accuracy
 
 
-def train(model, train_dl, val_dl, loss_fn, optimizer, device, epochs):
+def train(model, train_dl, val_dl, loss_fn, optimizer, device, epochs, save_path):
+    best_val_loss = float("inf")
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    history = {"train_loss": [], "val_loss": [], "train_acc": [], "val_acc": []}
+    
     epoch_bar = tqdm(range(1, epochs + 1), desc="Epochs")
+    
     for epoch in epoch_bar:
         train_loss, train_acc = train_single_epoch(
             model, train_dl, loss_fn, optimizer, device
         )
         val_loss, val_acc = validate(model, val_dl, loss_fn, device)
-        print(
-            f"Epoch {epoch}/{epochs} | "
-            f"Train loss: {train_loss:.4f}, acc: {train_acc:.1f}% | "
-            f"Val loss: {val_loss:.4f}, acc: {val_acc:.1f}%"
+        
+        history["train_loss"].append(train_loss)
+        history["val_loss"].append(val_loss)
+        history["train_acc"].append(train_acc)
+        history["val_acc"].append(val_acc)
+        
+        epoch_bar.set_postfix(
+            train_loss=f"{train_loss:.4f}",
+            train_acc=f"{train_acc:.1f}%",
+            val_loss=f"{val_loss:.4f}",
+            val_acc=f"{val_acc:.1f}%"
         )
-    print("Training complete")
+        
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            torch.save(model.state_dict(), save_path)
+            tqdm.write(f"  ✔ Model saved (val_loss: {val_loss:.4f})")
+            
+    return history
 
+def save_model(model, path):
+    os.makedirs(path.parent, exist_ok=True)
+    torch.save(model.state_dict(), path)
+    print(f"Model saved to {path}")
+    
+
+def plot_training(history, save_path):
+    epochs = range(1, len(history["train_loss"]) + 1)
+    
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+    
+    # Loss plot
+    ax1.plot(epochs, history["train_loss"], label="Train loss")
+    ax1.plot(epochs, history["val_loss"],   label="Val loss")
+    ax1.set_title("Loss")
+    ax1.set_xlabel("Epoch")
+    ax1.set_ylabel("Loss")
+    ax1.legend()
+    ax1.grid(True)
+
+    # Accuracy plot
+    ax2.plot(epochs, history["train_acc"], label="Train acc")
+    ax2.plot(epochs, history["val_acc"],   label="Val acc")
+    ax2.set_title("Accuracy")
+    ax2.set_xlabel("Epoch")
+    ax2.set_ylabel("Accuracy (%)")
+    ax2.legend()
+    ax2.grid(True)
+
+    plt.tight_layout()
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(save_path)
+    plt.close()
+    print(f"Training plot saved to {save_path}")
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -104,15 +158,24 @@ if __name__ == "__main__":
         n_mels=N_MELS,
         hop_length=HOP_LENGTH,
     ).to(device)
+    
     metadata_df = pd.read_csv(METADATA)
     train_val_meta = metadata_df[metadata_df["fold"] != 10]
     ds = UrbanDataset(DS_PATH, train_val_meta, transform)
     print("Creating dataloaders... ")
     train_dl, val_dl = create_dataloader(ds, BATCH_SIZE)
     print("Dataloaders created successfully")
+    
     model = SoundClassifier(NUM_CLASSES).to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LR, weight_decay=1e-4)
 
-    train(model, train_dl, val_dl, loss_fn, optimizer, device, EPOCHS)
+    history = train(model, train_dl, val_dl, loss_fn, optimizer, device, EPOCHS,
+          save_path=ROOT / "outputs" / "checkpoints" / "best_model.pth")
+    
+    plot_training(
+        history,
+        save_path=ROOT / "outputs" / "figures" / "training_plot.png"
+    )
+    
     print("Training finished.")
