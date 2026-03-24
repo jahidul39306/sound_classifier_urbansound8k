@@ -8,11 +8,15 @@ import yaml
 from pathlib import Path
 from transforms import AudioTransform
 
-with open("../configs/config.yaml", "r") as f:
+CONFIG_PATH = Path(__file__).parent.parent / "configs" / "config.yaml"
+ROOT = Path(__file__).parent.parent 
+
+
+with open(CONFIG_PATH, "r") as f:
     config = yaml.safe_load(f)
 
-DS_PATH = Path(config["directories"]["audio_data_path"])
-METADATA = Path(config["directories"]["metadata"])
+DS_PATH = ROOT / config["directories"]["audio_data_path"]
+METADATA = ROOT / config["directories"]["metadata"]
 DURATION = config["audio"]["duration"]
 SAMPLE_RATE = config["audio"]["sample_rate"]
 N_FFT = config["audio"]["n_fft"]
@@ -24,7 +28,7 @@ class UrbanDataset(Dataset):
 
     def __init__(self, audio_path, metadata, transform=None, device="cpu"):
         self.audio_path = audio_path
-        self.metadata = pd.read_csv(metadata)
+        self.metadata = pd.read_csv(metadata) if isinstance(metadata, (str, Path)) else metadata
         self.device = device
         self.transform = transform.to(device) if transform else None
 

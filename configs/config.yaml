@@ -1,6 +1,6 @@
 directories:
-  audio_data_path: "../data/raw/urbansound8k"
-  metadata: "../data/raw/urbansound8k/UrbanSound8K.csv"
+  audio_data_path: "data/raw/urbansound8k"
+  metadata: "data/raw/urbansound8k/UrbanSound8K.csv"
 
 audio:
   sample_rate: 22050
@@ -11,3 +11,8 @@ audio:
 
 model:
   num_classes: 10
+
+training:
+  batch_size: 128
+  epochs: 10
+  lr: 0.001

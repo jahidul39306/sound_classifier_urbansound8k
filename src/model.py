@@ -3,14 +3,14 @@ from torch import nn
 from torchsummary import summary
 import yaml
 
-with open("../configs/config.yaml", "r") as f:
-    config = yaml.safe_load(f)
+# with open("../configs/config.yaml", "r") as f:
+#     config = yaml.safe_load(f)
 
-NUM_CLASSES = config["model"]["num_classes"]
+# NUM_CLASSES = config["model"]["num_classes"]
 
 
 class SoundClassifier(nn.Module):
-    def __init__(self, num_classes=NUM_CLASSES):
+    def __init__(self, num_classes=10):
         super().__init__()
 
         def conv_block(in_ch, out_ch):
@@ -45,5 +45,5 @@ class SoundClassifier(nn.Module):
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = SoundClassifier(num_classes=NUM_CLASSES).to(device)
+    model = SoundClassifier(num_classes=10).to(device)
     summary(model, (1, 64, 173))
