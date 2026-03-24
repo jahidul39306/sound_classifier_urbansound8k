@@ -18,10 +18,15 @@ class AudioTransform(nn.Module):
             n_mels=n_mels
         )
 
+    def _get_resampler(self, sr):
+        if sr not in self._resamplers:
+            self._resamplers[sr] = torchaudio.transforms.Resample(sr, self.target_sr)
+        return self._resamplers[sr]
+    
+    
     def forward(self, signal, sr):
         if sr != self.target_sr:
-            resampler = torchaudio.transforms.Resample(sr, self.target_sr)
-            signal = resampler(signal)
+            signal = signal = self._get_resampler(sr)(signal)
 
         if signal.shape[0] > 1:
             signal = torch.mean(signal, dim=0, keepdim=True)

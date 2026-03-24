@@ -6,7 +6,7 @@ import pandas as pd
 import torchaudio
 import yaml
 from pathlib import Path
-from transforms import AudioTransform
+from src.transforms import AudioTransform
 
 CONFIG_PATH = Path(__file__).parent.parent / "configs" / "config.yaml"
 ROOT = Path(__file__).parent.parent 
