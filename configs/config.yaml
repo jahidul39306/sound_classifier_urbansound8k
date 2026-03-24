@@ -16,3 +16,4 @@ training:
   batch_size: 128
   epochs: 40
   lr: 0.001
+  device: "auto"

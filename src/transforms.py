@@ -10,6 +10,7 @@ class AudioTransform(nn.Module):
         self.n_fft = n_fft
         self.hop_length = hop_length
         self.n_mels = n_mels
+        self._resamplers = {}
         
         self.mel_spectrogram = torchaudio.transforms.MelSpectrogram(
             sample_rate=target_sr,
@@ -26,7 +27,7 @@ class AudioTransform(nn.Module):
     
     def forward(self, signal, sr):
         if sr != self.target_sr:
-            signal = signal = self._get_resampler(sr)(signal)
+            signal = self._get_resampler(sr)(signal)
 
         if signal.shape[0] > 1:
             signal = torch.mean(signal, dim=0, keepdim=True)
