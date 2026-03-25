@@ -61,9 +61,9 @@ if __name__ == "__main__":
     test_meta = metadata_df[metadata_df["fold"] == 10].reset_index(drop=True)
 
     train_val_ds = UrbanDataset(
-        AUDIO_DIR, train_val_meta, transform=transform, device=device
+        AUDIO_DIR, train_val_meta, transform=transform
     )
-    test_ds = UrbanDataset(AUDIO_DIR, test_meta, transform=transform, device=device)
+    test_ds = UrbanDataset(AUDIO_DIR, test_meta, transform=transform)
 
     # Split train/val
     train_ds, val_ds = train_val_split(train_val_ds, val_split=0.1)
@@ -111,7 +111,14 @@ if __name__ == "__main__":
     # Plot
     plot_training(history, save_path=ROOT / "outputs" / "figures" / "training_plot.png")
 
+    # Load best model
+    checkpoint_path = ROOT / "outputs" / "checkpoints" / "best_model.pth"
+
+    model.load_state_dict(torch.load(checkpoint_path, map_location=device))
+    model.to(device)
+    model.eval()
+
     # Final test evaluation
-    print("Evaluating on test set...")
+    print("Evaluating on BEST saved model...")
     test_loss, test_acc = validate(model, test_dl, loss_fn, device)
     print(f"Test loss: {test_loss:.4f} | Test acc: {test_acc:.1f}%")
