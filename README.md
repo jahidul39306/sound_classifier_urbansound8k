@@ -43,16 +43,16 @@ The project uses the [UrbanSound8K dataset](https://urbansounddataset.weebly.com
 
 ## 📁 Project Structure
 sound_classifier_urbansound8k/
-├── configs/ # Configuration files
-│ └── config.yaml # Main configuration file
-├── notebooks/ # Jupyter notebooks for exploration
-├── outputs/ # Output directory
-│ └── figures/ # Generated figures and plots
-├── src/ # Source code
-│ ├── data/ # Data loading and preprocessing
-│ ├── models/ # Model architecture definitions
-│ ├── training/ # Training and evaluation logic
-│ └── utils/ # Utility functions
-├── main.py # Main entry point
-├── requirements.txt # Python dependencies
-└── README.md # This file
+├── configs/                 # Configuration files
+│   └── config.yaml         # Main configuration file
+├── notebooks/              # Jupyter notebooks for exploration
+├── outputs/                # Output directory
+│   └── figures/           # Generated figures and plots
+├── src/                   # Source code
+│   ├── data/              # Data loading and preprocessing
+│   ├── models/            # Model architecture definitions
+│   ├── training/          # Training and evaluation logic
+│   └── utils/             # Utility functions
+├── main.py                # Main entry point
+├── requirements.txt       # Python dependencies
+└── README.md             # This file
