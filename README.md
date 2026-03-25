@@ -42,17 +42,18 @@ The project uses the [UrbanSound8K dataset](https://urbansounddataset.weebly.com
 | 9 | Street Music |
 
 ## 📁 Project Structure
+```text
 sound_classifier_urbansound8k/
-├── configs/                 # Configuration files
-│   └── config.yaml         # Main configuration file
-├── notebooks/              # Jupyter notebooks for exploration
-├── outputs/                # Output directory
-│   └── figures/           # Generated figures and plots
-├── src/                   # Source code
-│   ├── data/              # Data loading and preprocessing
-│   ├── models/            # Model architecture definitions
-│   ├── training/          # Training and evaluation logic
-│   └── utils/             # Utility functions
-├── main.py                # Main entry point
-├── requirements.txt       # Python dependencies
-└── README.md             # This file
+├── configs/                # Configuration files
+│   └── config.yaml         # Main configuration for hyperparameters & paths
+├── notebooks/              # Jupyter notebooks for EDA and experimentation
+├── outputs/                # Training outputs
+│   └── figures/            # Saved plots (Loss/Accuracy curves, Confusion Matrix)
+├── src/                    # Core source code
+│   ├── data/               # Scripts for data loading and MFCC preprocessing
+│   ├── models/             # Neural network architecture definitions
+│   ├── training/           # Training loops and evaluation logic
+│   └── utils/              # Helper functions (logging, file handling)
+├── main.py                 # Primary entry point to run the pipeline
+├── requirements.txt        # Project dependencies
+└── README.md               # Project documentation
